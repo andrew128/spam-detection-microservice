@@ -1,4 +1,16 @@
 from utils import load_spam_dataset
+from snorkel.labeling import PandasLFApplier
+from snorkel.labeling import labeling_function
+import re
+from snorkel.preprocess import preprocessor
+from textblob import TextBlob
+from snorkel.labeling import LabelingFunction
+from snorkel.labeling.lf.nlp import nlp_labeling_function
+from snorkel.labeling.model import LabelModel
+from snorkel.labeling import filter_unlabeled_dataframe
+from sklearn.feature_extraction.text import CountVectorizer
+from snorkel.utils import probs_to_preds
+from sklearn.linear_model import LogisticRegression
 
 df_train, df_test = load_spam_dataset()
 
@@ -10,18 +22,10 @@ ABSTAIN = -1
 HAM = 0
 SPAM = 1
 
-from snorkel.labeling import PandasLFApplier
-from snorkel.labeling import labeling_function
-
-import re
-
-
 @labeling_function()
 def regex_check_out(x):
     return SPAM if re.search(r"check.*out", x.text, flags=re.I) else ABSTAIN
 
-from snorkel.preprocess import preprocessor
-from textblob import TextBlob
 
 @preprocessor(memoize=True)
 def textblob_sentiment(x):
@@ -37,8 +41,6 @@ def textblob_polarity(x):
 @labeling_function(pre=[textblob_sentiment])
 def textblob_subjectivity(x):
     return HAM if x.subjectivity >= 0.5 else ABSTAIN
-
-from snorkel.labeling import LabelingFunction
 
 
 def keyword_lookup(x, keywords, label):
@@ -75,7 +77,6 @@ def short_comment(x):
     """Ham comments are often short, such as 'cool video!'"""
     return HAM if len(x.text.split()) < 5 else ABSTAIN
 
-from snorkel.labeling.lf.nlp import nlp_labeling_function
 
 
 @nlp_labeling_function()
@@ -105,7 +106,6 @@ applier = PandasLFApplier(lfs=lfs)
 L_train = applier.apply(df=df_train)
 
 # Use Label Model to combined input data
-from snorkel.labeling.model import LabelModel
 
 label_model = LabelModel(cardinality=2, verbose=True)
 label_model.fit(L_train=L_train, n_epochs=500, log_freq=100, seed=123)
@@ -114,26 +114,22 @@ label_model.fit(L_train=L_train, n_epochs=500, log_freq=100, seed=123)
 probs_train = label_model.predict_proba(L=L_train)
 
 # Filter abstained inputs
-from snorkel.labeling import filter_unlabeled_dataframe
 
 df_train_filtered, probs_train_filtered = filter_unlabeled_dataframe(
     X=df_train, y=probs_train, L=L_train
 )
 
 # Represent each data point as a one-hot vector
-from sklearn.feature_extraction.text import CountVectorizer
 
 vectorizer = CountVectorizer(ngram_range=(1, 5))
 X_train = vectorizer.fit_transform(df_train_filtered.text.tolist())
 X_test = vectorizer.transform(df_test.text.tolist())
 
 # Turn probs into preds
-from snorkel.utils import probs_to_preds
 
 preds_train_filtered = probs_to_preds(probs=probs_train_filtered)
 
 # Train logistic regression model
-from sklearn.linear_model import LogisticRegression
 
 sklearn_model = LogisticRegression(C=1e3, solver="liblinear")
 sklearn_model.fit(X=X_train, y=preds_train_filtered)
