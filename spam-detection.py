@@ -12,6 +12,10 @@ from sklearn.feature_extraction.text import CountVectorizer
 from snorkel.utils import probs_to_preds
 from sklearn.linear_model import LogisticRegression
 
+'''
+Train and save an logistic regression model trained using Snorkel
+'''
+
 df_train, df_test = load_spam_dataset()
 
 # We pull out the label vectors for ease of use later
@@ -25,7 +29,6 @@ SPAM = 1
 @labeling_function()
 def regex_check_out(x):
     return SPAM if re.search(r"check.*out", x.text, flags=re.I) else ABSTAIN
-
 
 @preprocessor(memoize=True)
 def textblob_sentiment(x):
