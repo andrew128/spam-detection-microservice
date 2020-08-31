@@ -140,3 +140,7 @@ sklearn_model.fit(X=X_train, y=preds_train_filtered)
 
 print(f"Test Accuracy: {sklearn_model.score(X=X_test, y=Y_test) * 100:.1f}%")
 dump(sklearn_model, 'sklearn_model.joblib')
+dump(vectorizer, 'vectorizer.joblib')
+
+# test = vectorizer.transform(['asdlasdfasd'])
+# print(sklearn_model.predict(test))
