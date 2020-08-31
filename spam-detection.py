@@ -11,6 +11,7 @@ from snorkel.labeling import filter_unlabeled_dataframe
 from sklearn.feature_extraction.text import CountVectorizer
 from snorkel.utils import probs_to_preds
 from sklearn.linear_model import LogisticRegression
+from joblib import dump
 
 '''
 Train and save an logistic regression model trained using Snorkel
@@ -138,3 +139,4 @@ sklearn_model = LogisticRegression(C=1e3, solver="liblinear")
 sklearn_model.fit(X=X_train, y=preds_train_filtered)
 
 print(f"Test Accuracy: {sklearn_model.score(X=X_test, y=Y_test) * 100:.1f}%")
+dump(sklearn_model, 'sklearn_model.joblib')
