@@ -1,4 +1,3 @@
-
 from snorkel.labeling import labeling_function
 import re
 from snorkel.preprocess import preprocessor
