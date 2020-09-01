@@ -11,10 +11,10 @@ def index():
     form = InputCommentForm(request.form)
     if request.method == 'POST' and form.validate():
         user_input = form.r.data
-        model = load('./snorkel/sklearn_model.joblib')
-        vectorizer = load('./snorkel/vectorizer.joblib')
+        spam_model = load('./snorkel_spam_detection/sklearn_model.joblib')
+        vectorizer = load('./snorkel_spam_detection/vectorizer.joblib')
         text = vectorizer.transform([user_input]) 
-        prediction = model.predict(text)[0]
+        prediction = spam_model.predict(text)[0]
         if prediction == 0:
             s = 'not spam'
         else:
