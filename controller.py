@@ -11,8 +11,8 @@ def index():
     form = InputCommentForm(request.form)
     if request.method == 'POST' and form.validate():
         user_input = form.r.data
-        model = load('sklearn_model.joblib')
-        vectorizer = load('vectorizer.joblib')
+        model = load('./snorkel/sklearn_model.joblib')
+        vectorizer = load('./snorkel/vectorizer.joblib')
         text = vectorizer.transform([user_input]) 
         prediction = model.predict(text)[0]
         if prediction == 0:
