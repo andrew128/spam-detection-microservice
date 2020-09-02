@@ -44,9 +44,6 @@ class SpamDetection:
         # We pull out the label vectors for ease of use later
         Y_test = self.df_test.label.values
 
-        for lf in self.lfs:
-            print(lf.name)
-
         applier = PandasLFApplier(lfs=self.lfs)
         L_train = applier.apply(df=self.df_train)
 
