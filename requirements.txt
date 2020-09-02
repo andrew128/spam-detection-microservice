@@ -2,3 +2,8 @@ flask
 joblib
 sklearn
 wtforms
+snorkel
+tensorflow
+textblob
+spacy
+flask_wtf

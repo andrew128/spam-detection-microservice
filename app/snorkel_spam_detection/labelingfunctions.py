@@ -65,8 +65,6 @@ def short_comment(x):
     """Ham comments are often short, such as 'cool video!'"""
     return HAM if len(x.text.split()) < 5 else ABSTAIN
 
-
-
 @nlp_labeling_function()
 def has_person_nlp(x):
     """Ham comments mention specific people and are short."""

@@ -1,0 +1,18 @@
+<form method="POST" action="/">
+  {{ commentform.csrf_token }}
+  {{ commentform.comment.label }} {{ commentform.comment(size=20) }}
+  <input type="submit" value="Predict">
+
+  <br>
+  Prediction is:
+{% if s != None %}
+{{s}}
+{% endif %}
+</form>
+
+
+<form method="POST" action="/">
+  {{ newlfform.csrf_token }}
+  {{ newlfform.word.label }} {{ newlfform.word(size=20) }}
+  <input type="submit" value="Add">
+</form>
